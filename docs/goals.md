@@ -15,7 +15,6 @@ __Splatfilch__ is an automated music sharing system that aims to be something be
 ## Stretch Goals
 - Implement ability for user to add their favorite artists
 - Notify user when their favorite artists release music (email, text)
-
 - Universal method to flag tracks for retention that works across common players/interfaces
 - Intelligent download rules (avoid obvious duplicates)
 - Stream files to user’s mobile devices/computers.
