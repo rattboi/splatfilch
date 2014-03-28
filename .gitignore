@@ -1,5 +1,6 @@
 # temporary storage file for passwords/etc
 privates.py
+privates.json
 
 # OSX generated files
 .DS_Store

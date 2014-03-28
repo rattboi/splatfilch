@@ -1,7 +1,7 @@
 # Splatfilch: Goals
 
 ## Abstract
-__Splatfilch__ is an automated music sharing system that aims to be something between an internet radio station and a shared folder, but with enhanced functionality.  Music will be aggregated from various sources ([YouTube](www.youtube.com), [Soundcloud](www.soundcloud.com), torrents, etc) and shared with all users of the service.  The music selection will change over time as new tracks are released, and users will have the option of flagging tracks for retention so they remain available. 
+__Splatfilch__ is an automated music sharing system that aims to be something between an internet radio station and a shared folder, but with enhanced functionality.  Music will be aggregated from various sources ([YouTube](www.youtube.com), [Soundcloud](www.soundcloud.com), etc) and shared with all users of the service.  The music selection will change over time as new tracks are released, and users will have the option of flagging tracks for retention so they remain available. 
 
 ## Requirements
 - Aggregate music from all sources into a centralized location and tag appropriately
