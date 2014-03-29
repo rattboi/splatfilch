@@ -2,18 +2,27 @@
 
 import re
 
-artistTitleRegex = '''(<span class="webkit-html-attribute-name">data-video-title</span>="<span class="webkit-html-attribute-value">)(.+?)( - )(.+?)(?:</span>)'''
+# this regex should work across most/all video pages
+artistTitleRegex = '''(data-video-title</span>="<span class="webkit-html-attribute-value">)(.+?)( - )(.+?)(?:<)'''
 
-name    = '''AirwaveDubstepTV'''
+# channel will be known by program
+channel  = '''AirwaveDubstepTV'''
 
-def GetSongData( video_page, videopage_regex, channel_name):
+def GetSongData( video_page, videopage_regex):
+    '''given youtube video page html text, returns artist and title'''
     pdata = re.search(videopage_regex, video_page)
     if pdata:
-        return (pdata.group(2), pdata.group(4), channel_name)
+        return (pdata.group(2), pdata.group(4))
+    else:
+        return ("Error", "GetSongData")
 
+# BEGIN MAIN
+
+# open a sample html file
 page_text = open("videoADT.html", "r").read()
 
-(artist, title, channel) = GetSongData( page_text, artistTitleRegex, name)
+# run extration
+(artist, title) = GetSongData( page_text, artistTitleRegex)
 
 print "artist  = " + artist 
 print "title   = " + title 
