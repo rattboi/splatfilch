@@ -3,6 +3,8 @@
 import smtplib
 import json
 from pprint import pprint
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # Send a text message notifying them of a new song by artist (based on their choices)
 # This opens json file containing needed values
@@ -25,14 +27,33 @@ def make_email_message(person, subject, message):
     ''' Constructs email from given information (generic method).  Pass string of person's name.''' 
     json_data=open('privates.json')
     data = json.load(json_data)
+
     json_data.close()
-    message = """From: %s
-    To: %s %s
-    Subject: %s
-    %s""" % (data['credentials']['username'],person, data['phonebook'][person][1], subject, message)
-    # Need to use message builder, http://docs.python.org/2/library/email.parser.html#email.message_from_string.
-     
-    return message
+    full_msg = MIMEMultipart('alternative')
+    # plaintext version of message
+    full_msg['Subject'] = '%s' %subject
+    full_msg['From']    = '%s' % data['credentials']['username']
+    full_msg['To']      = '%s' % data['phonebook'][person][1]
+    text = "%s" % message 
+   
+    # html version of message
+    html = """\
+    <html>
+        <head></head>
+        <body>
+            <p> This is the HTML Version of the message <br>
+            This should be sent as an argument in the future. 
+            </p>
+        </body>
+    </html>
+    """
+
+    # Record the MIME types of both parts - text/plain and text/html.
+    part1 = MIMEText(text, 'plain')
+    part2 = MIMEText(html, 'html')
+    full_msg.attach(part1)
+    full_msg.attach(part2)
+    return full_msg.as_string()
 
 def send_message(person, message, service):
     '''Sends message to any person in our phonebook. Service selects which technology is used
