@@ -9,15 +9,18 @@ from email.mime.text import MIMEText
 # Send a text message notifying them of a new song by artist (based on their choices)
 # This opens json file containing needed values
 # TODO: Correctly construct email message, investigate IMAP 
+# TODO: Create subscription to avoid spam filter
 
 def main():
     '''In the future, this could read the correct user from a file and depending and select the
     correct message to send as well'''
-    message = "Hey, how's it going? Got Heem!"
-    subject = "Unimportant information"
+    #message = "Testing texting"
+    message = "Testing email"
+    subject = "plain"
     person  = "Erik Rhodes"
     full_message = make_email_message(person, subject, message)
     send_message(person, full_message, 'email')
+    #send_message(person, message, 'text')
 
 def make_new_song_text(artist, song_id):
     '''Creates the message based off the artist and song_id, which are pulled from youtube-dl.'''
@@ -27,7 +30,6 @@ def make_email_message(person, subject, message):
     ''' Constructs email from given information (generic method).  Pass string of person's name.''' 
     json_data=open('privates.json')
     data = json.load(json_data)
-
     json_data.close()
     full_msg = MIMEMultipart('alternative')
     # plaintext version of message
@@ -37,12 +39,13 @@ def make_email_message(person, subject, message):
     text = "%s" % message 
    
     # html version of message
+    #TODO: Put html in separate file
     html = """\
     <html>
         <head></head>
         <body>
-            <p> This is the HTML Version of the message <br>
-            This should be sent as an argument in the future. 
+            <p> Totally different now<br>
+            Here's more info. Yep.
             </p>
         </body>
     </html>
@@ -53,7 +56,7 @@ def make_email_message(person, subject, message):
     part2 = MIMEText(html, 'html')
     full_msg.attach(part1)
     full_msg.attach(part2)
-    return full_msg.as_string()
+    return full_msg.as_string() 
 
 def send_message(person, message, service):
     '''Sends message to any person in our phonebook. Service selects which technology is used
@@ -65,15 +68,14 @@ def send_message(person, message, service):
     server = smtplib.SMTP('smtp.gmail.com',587)
 
     #select correct list index to get correct email or text address
-    if service == 'text' or 'Text':
+    if (service == 'text' or service == 'Text'):
         s = 0
-    elif service == 'email' or 'Email':
+    elif (service == 'email' or service == 'Email'):
         s = 1
     else:
         print ("Incorrect service option selected.  Please enter 'text' or 'email'")
 
-    #Problem with texts triggering antivirus scan: 'X-Antivirus: avast!... '
-    
+        #NOTE: sends text with leading '/'
     try:
         server.starttls()
         server.login(data['credentials']['username'],data['credentials']['password'])
