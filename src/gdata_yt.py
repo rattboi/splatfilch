@@ -1,7 +1,10 @@
 # http://developers.google.com/youtube/1.0/developers_guide_python#RetrievingVideos
 # These haven't been changed from this source
 # There are errors with the location but it still pulls the recently added videos when tested
+import gdata.youtube
+import gdata.youtube.service
 
+yt_service = gdata.youtube.service.YouTubeService()
 
 def PrintVideoFeed(feed):
   for entry in feed.entry:
@@ -24,9 +27,9 @@ def PrintEntryDetails(entry):
   print 'Video duration: %s' % entry.media.duration.seconds
 
   # non entry.media attributes
-  print 'Video geo location: %s' % entry.geo.location()
-  print 'Video view count: %s' % entry.statistics.view_count
-  print 'Video rating: %s' % entry.rating.average
+  # print 'Video geo location: %s' % entry.geo.location()
+  # print 'Video view count: %s' % entry.statistics.view_count
+  # print 'Video rating: %s' % entry.rating.average
 
   # show alternate formats
   for alternate_format in entry.media.content:
