@@ -7,8 +7,6 @@ def PrintVideoFeed(feed):
   for entry in feed.entry:
     PrintEntryDetails(entry)
 
-
-
 def GetAndPrintVideoFeed(uri):
   yt_service = gdata.youtube.service.YouTubeService()
   feed = yt_service.GetYouTubeVideoFeed(uri)
