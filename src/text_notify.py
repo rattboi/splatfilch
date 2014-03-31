@@ -8,19 +8,22 @@ from email.mime.text import MIMEText
 
 # Send a text message notifying them of a new song by artist (based on their choices)
 # This opens json file containing needed values
-# TODO: Correctly construct email message, investigate IMAP 
+# TODO: investigate IMAP 
 # TODO: Create subscription to avoid spam filter
+# TODO: Put html in separate file (make it look nice)
+# TODO: Rename this file
 
+# TODO: concat multiple new artists in 1 text
 def main():
     '''In the future, this could read the correct user from a file and depending and select the
     correct message to send as well'''
-    #message = "Testing texting"
-    message = "Testing email"
+    message = "Got.... Heem"
+    # message = "Testing email"
     subject = "plain"
-    person  = "Erik Rhodes"
-    full_message = make_email_message(person, subject, message)
-    send_message(person, full_message, 'email')
-    #send_message(person, message, 'text')
+    person  = "Eric Krause"
+    # full_message = make_email_message(person, subject, message)
+    #send_message(person, full_message, 'email')
+    send_message(person, message, 'text')
 
 def make_new_song_text(artist, song_id):
     '''Creates the message based off the artist and song_id, which are pulled from youtube-dl.'''
@@ -34,13 +37,13 @@ def make_email_message(person, subject, message):
     full_msg = MIMEMultipart('alternative')
     # plaintext version of message
     full_msg['Subject'] = '%s' %subject
-    full_msg['From']    = '%s' % data['credentials']['username']
+    full_msg['From']    = '%s' % data['credentials']['username'] 
+        #data['credentials']['username']
     full_msg['To']      = '%s' % data['phonebook'][person][1]
     text = "%s" % message 
    
     # html version of message
-    #TODO: Put html in separate file
-    html = """\
+    html = """
     <html>
         <head></head>
         <body>
@@ -50,6 +53,10 @@ def make_email_message(person, subject, message):
         </body>
     </html>
     """
+    # This reads in html file
+   # f = open("subscribe_msg.html")
+   # html = f.read()
+   # f.close()
 
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, 'plain')
@@ -75,12 +82,11 @@ def send_message(person, message, service):
     else:
         print ("Incorrect service option selected.  Please enter 'text' or 'email'")
 
-        #NOTE: sends text with leading '/'
     try:
         server.starttls()
         server.login(data['credentials']['username'],data['credentials']['password'])
-        server.sendmail(data['credentials']['username'], data['phonebook'][person][s], message)
+        server.sendmail(data['credentials']['username'], data['phonebook'][person][s],message)
     except:
-        print "Could not send email"
+        print "Could not send message"
     finally:
         server.quit()
