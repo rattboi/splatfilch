@@ -13,7 +13,6 @@
 
 ### IMPORTS
 import argprocess
-import time
 from datetime import datetime
 from configmanagement import cSplatfilchConfig
 
@@ -26,14 +25,13 @@ from configmanagement import cSplatfilchConfig
 args = argprocess.get_args()
 
 # read splatfilch config to find last run time/date, get output dirs
-cfg = cSplatfilchConfig()   # create config handler obj
-lastrun = cfg.getLastrun()  # lastrun is a time.struct_time()
+cfg = cSplatfilchConfig()   # create instance of SplatfilchConfig class
+lastrun = cfg.getLastrun()  # lastrun is a datetime obj
 
 # test functions/demo of functionality
 print "date/time of last run: " + str(lastrun)
 print "time since last run:   " + str(datetime.now() - lastrun)
 
-cfg.setLastrun(datetime.now())
 
 #   read cache, and other program settings
 
@@ -78,5 +76,6 @@ cfg.setLastrun(datetime.now())
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
+cfg.setLastrun(datetime.now())
 
 exit(0)

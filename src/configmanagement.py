@@ -3,14 +3,13 @@
 
 import ConfigParser
 import os.path
-# import time
 from datetime import datetime
 
 class cSplatfilchConfig(object):
     ''' wrapper around ConfigParser, specialized for splatfilch'''
-    filename =          '.splatfilch.cfg'
+    filename =   '.splatfilch.cfg'
     lastrun_obj = None
-    lastrun_fmt =      '%Y %m %d %H %M %S'
+    lastrun_fmt = '%Y %m %d %H %M %S'
     config = ConfigParser.SafeConfigParser()
 
     def __init__(self):
