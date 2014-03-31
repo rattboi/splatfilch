@@ -33,6 +33,7 @@ lastrun = cfg.getLastrun()  # lastrun is a time.struct_time()
 print "date/time of last run: " + str(lastrun)
 print "time since last run:   " + str(datetime.now() - lastrun)
 
+cfg.setLastrun(datetime.now())
 
 #   read cache, and other program settings
 
