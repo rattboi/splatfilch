@@ -1,3 +1,6 @@
+# splatfilch config files
+.splatfilch.cfg
+
 # temporary storage file for passwords/etc
 privates.py
 privates.json
