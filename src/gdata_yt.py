@@ -1,10 +1,26 @@
 # http://developers.google.com/youtube/1.0/developers_guide_python#RetrievingVideos
 # These haven't been changed from this source
 # There are errors with the location but it still pulls the recently added videos when tested
+# Need to import the gdata package
+
 import gdata.youtube
 import gdata.youtube.service
 
 yt_service = gdata.youtube.service.YouTubeService()
+
+#This function gets the user (channel) and prints the video title, description, url, etc
+def SearchAndPrint(user):
+  yt_service = gdata.youtube.service.YouTubeService()
+  query = gdata.youtube.service.YouTubeVideoQuery()
+  query.time = 'today'
+  query.author = user 
+  query.max_results = 10
+  query.orderby = 'viewCount'
+  query.racy = 'include'
+  feed = yt_service.YouTubeQuery(query)
+  PrintVideoFeed(feed)
+
+
 
 def PrintVideoFeed(feed):
   for entry in feed.entry:
@@ -48,16 +64,6 @@ def GetAndPrintFeedByUrl():
   # You can retrieve a YouTubeVideoFeed by passing in the URI
   uri = 'http://gdata.youtube.com/feeds/api/standardfeeds/JP/most_popular'
   PrintVideoFeed(yt_service.GetYouTubeVideoFeed(uri))
-
-def SearchAndPrint(search_terms):
-  yt_service = gdata.youtube.service.YouTubeService()
-  query = gdata.youtube.service.YouTubeVideoQuery()
-  query.vq = search_terms
-  query.time = 'today'
-  query.orderby = 'viewCount'
-  query.racy = 'include'
-  feed = yt_service.YouTubeQuery(query)
-  PrintVideoFeed(feed)
 
 
 def GetAndPrintUserUploads(username):
