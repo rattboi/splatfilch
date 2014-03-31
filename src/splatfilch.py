@@ -13,6 +13,9 @@
 
 ### IMPORTS
 import argprocess
+import time
+from datetime import datetime
+from configmanagement import cSplatfilchConfig
 
 ### GLOBAL CONSTANTS
 # currently none
@@ -23,6 +26,14 @@ import argprocess
 args = argprocess.get_args()
 
 # read splatfilch config to find last run time/date, get output dirs
+cfg = cSplatfilchConfig()   # create config handler obj
+lastrun = cfg.getLastrun()  # lastrun is a time.struct_time()
+
+# test functions/demo of functionality
+print "date/time of last run: " + str(lastrun)
+print "time since last run:   " + str(datetime.now() - lastrun)
+
+
 #   read cache, and other program settings
 
 # (future) open the previous log file respond to previous errors
