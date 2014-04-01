@@ -15,16 +15,3 @@ def GetSongData( video_page, videopage_regex):
         return (pdata.group(2), pdata.group(4))
     else:
         return ("Error", "GetSongData")
-
-# BEGIN MAIN
-
-# open a sample html file
-page_text = open("videoADT.html", "r").read()
-
-# run extration
-(artist, title) = GetSongData( page_text, artistTitleRegex)
-
-print "artist  = " + artist 
-print "title   = " + title 
-print "channel = " + channel 
-

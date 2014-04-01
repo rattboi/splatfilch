@@ -8,15 +8,17 @@ from datetime import datetime
 
 class cSplatfilchConfig(object):
     ''' wrapper around ConfigParser, specialized for splatfilch'''
-    filename =          '.splatfilch.cfg'
+    filename    = '.splatfilch.cfg'
     lastrun_obj = None
-    lastrun_fmt =      '%Y %m %d %H %M %S'
+    lastrun_fmt = '%Y %m %d %H %M %S'
     config = ConfigParser.SafeConfigParser()
 
     def __init__(self):
         ''' ctor populates members, uses defaults if no cfg file'''
+        
         # create the file if not present
         if not os.path.exists(self.filename):
+            
             #add default sections and set to today
             self.config.add_section('lastrun')
             self.setLastrun(datetime.today())

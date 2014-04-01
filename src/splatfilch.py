@@ -13,12 +13,11 @@
 
 ### IMPORTS
 import argprocess
-import time
 from datetime import datetime
 from configmanagement import cSplatfilchConfig
 
 ### GLOBAL CONSTANTS
-# currently none
+lastrun = None
 
 ######################### PREPROCESSING #############################
 
@@ -27,13 +26,7 @@ args = argprocess.get_args()
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj
-lastrun = cfg.getLastrun()  # lastrun is a time.struct_time()
-
-# test functions/demo of functionality
-print "date/time of last run: " + str(lastrun)
-print "time since last run:   " + str(datetime.now() - lastrun)
-
-cfg.setLastrun(datetime.now())
+lastrun = cfg.getLastrun()  # lastrun is a datetime obj
 
 #   read cache, and other program settings
 
@@ -50,13 +43,13 @@ cfg.setLastrun(datetime.now())
 
 # get recent uploads from channel (newer than last run date)
 
-# perform duplicate detection 
+# perform duplicate detection
 #   - extract artist, track from vid title (gdata or vid page regex)
 #   - (future) fuzzy compare against cache of recent downloads
 #   - straight compare against recent d/l cache for exact duplicates
 
 # for each new and unique video, add it to the 'to download' list
-#   - note: might be good to include title-artist-channel in same 
+#   - note: might be good to include title-artist-channel in same
 #           list, so that this info does not need to be re-extracted
 
 
@@ -78,5 +71,6 @@ cfg.setLastrun(datetime.now())
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
+cfg.setLastrun(datetime.now())
 
 exit(0)
