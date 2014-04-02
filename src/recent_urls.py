@@ -1,33 +1,36 @@
-# http://developers.google.com/youtube/1.0/developers_guide_python#RetrievingVideos
-# Need to import the gdata package
-        
 import gdata.youtube
 import gdata.youtube.service
 import json
               
-# Issue #21 and 19, maybe 20?
-# issue 6 deals with crontab.  Make branch, upload file and list instrucctions.
-#This function gets the user (channel) and prints the video title, description,
+# To run, install the gdata package
+# http://developers.google.com/youtube/1.0/developers_guide_python#RetrievingVideos
 
+# This program gets the user (channel) and saves the title and URL. 
 def main():
+    # open file containing selected channels to search through
     f = open('channels.txt', 'r')
     lines = f.readlines()
     f.close()
-    for l in lines:
-         SearchAndPrint(l[:-1])
+    # for each line (which corresponds to user)
+    for user in lines:
+         SearchAndPrint(user.rstrip()) # send user with '\n' removed
 
   
 def SearchAndPrint(user):
+    '''Queries from the gdata api to specific search parameters'''
+    # This looks for any videos uploaded today based on the user (channel)
     yt_service = gdata.youtube.service.YouTubeService()
     query = gdata.youtube.service.YouTubeVideoQuery()
     query.time = 'today'
     query.author = user
-    query.max_results = 10
+    # Max results limits # of results we look at, can be changed accordingly
+    query.max_results = 25 
     query.orderby = 'viewCount'
     query.racy = 'include'
     feed = yt_service.YouTubeQuery(query)
     PrintVideoFeed(feed)
- 
+    for entry in feed.entry:
+        SaveURL(entry)
  
 def PrintEntryDetails(entry):
     print 'Video title: %s' % entry.media.title.text
@@ -36,12 +39,26 @@ def PrintEntryDetails(entry):
 def PrintVideoFeed(feed):
     for entry in feed.entry:
         PrintEntryDetails(entry)
-	SaveURL(entry)
 
 def SaveURL(entry):
     f = open("URLs.txt", "a")
-    # do partition when '&' is spotted and remove 
-    f.write(entry.media.player.url)
-    f.write('\n')
-    f.close()
+    song = [entry.media.player.url, entry.media.title.text]
+    url = entry.media.player.url
+    title = entry.media.title.text
+    # do partition when '&' is spotted
+    # should make sure '&' doesn't appear normally
+    url = url.partition('&')[0]
+    f.write(url + ',' + title + '\n')
+    f.close
 	 
+def read_URLS():
+    '''Sample function for how to read files of channel and URL'''
+    
+    f = open('URLs.txt', 'r')
+    lines = f.readlines()
+    f.close()
+    # To split the entry, partition based on the ','
+    lines[0].partition(',')[0]
+    # To get rid of '\n', use .rstrip()
+    # Do what you want after this ...    
+
