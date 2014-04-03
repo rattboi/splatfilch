@@ -1,14 +1,21 @@
 #!/usr/bin/env python
+'''the call_youtube_dl function lives here'''
 
 import subprocess
 
-def download_convert(url, channel, artist, track):
-    log_filename = "./ytdl.log"
-    output_format = artist + " - " + track + \
-        " [" + channel + "]" + '''.%(ext)s'''
-    with open(log_filename, "w") as f:
-        subprocess.call(['youtube-dl', '-o', output_format, url], stdout=f)
-    return
+def call_youtube_dl(url, channel, artist, track):
+    '''downloads specified url, using channel, artist, and track to
+ specify the output name.  returns False indicating no errors, else
+ returns True indicating that youtube-dl call produced stderr output'''
 
-download_convert('''https://www.youtube.com/watch?v=EfvIy236mR8''',
-        "mychannel", "myartist", "mysong")
+    oformat = artist + " - " + track + " [" + channel + "]" + ".%(ext)s"
+
+    proc = subprocess.Popen(['youtube-dl', '-o', oformat, url],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = proc.communicate()
+    proc.wait()
+
+    with open("youtubedl.log", "w") as ofile:
+        ofile.write(stderr+stdout)
+
+    return False if len(stderr) == 0 else True
