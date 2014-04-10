@@ -3,16 +3,21 @@
 from datetime import datetime
 import os
 
-# establish error levels:
-DBG, WARN, ERR = range(3)
+# establish verbosity levels:
+QUIET, VERBOSE, DEBUG = range(3)
 
 class LogFile(object):
     log_directory = "./log"
     filename_base = log_directory + "/splatfilch_"
     start_time = datetime.today()
+    fptr = None
+    verbosity = QUIET
 
-    def __init__(self):
+    def __init__(self, verbosity=QUIET):
         '''begins a new logfile with the current date/time'''
+
+        # set the verbosity level
+        self.verbosity = verbosity
 
         # make the directory if it does not exist
         if not os.path.isdir(self.log_directory):
@@ -25,9 +30,26 @@ class LogFile(object):
         # append extension
         filename += ".txt"
 
-        with open(filename, 'w') as fptr:
-            fptr.write(self.start_time.strftime(
-                "=== Splatfilch runtime log for %m-%d-%Y, %I:%M:%S %p ===\n"))
+        self.fptr = open(filename, 'w')
+        self.fptr.write(self.start_time.strftime(
+            "=== Splatfilch runtime log for %m-%d-%Y, %I:%M:%S %p ===\n"))
 
-log = LogFile()
+    def __del__(self):
+        self.fptr.close()
 
+    def error(self, msg):
+        '''always writes to log file.  use for unrecoverable/fatal errors'''
+        self.fptr.write("<  ERROR  >  " + msg + "\n")
+
+    def warning(self, msg):
+        '''writes to log file when verbosity is enabled.  use for warnings \
+        regarding uncertain results or strange behavior that is not fatal.'''
+        if self.verbosity >= VERBOSE:
+            self.fptr.write("< WARNING >  " + msg + "\n")
+
+    def info(self, msg):
+        '''only writes to log file if debug verbosity is enabled.  no message \
+        is too mundane for this logging level as it may not even be exposed \
+        to the user.'''
+        if self.verbosity >= DEBUG:
+            self.fptr.write("<  DEBUG  >  " + msg + "\n")
