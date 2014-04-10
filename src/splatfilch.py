@@ -12,7 +12,7 @@
 # pylint: disable-msg=C0103
 
 ### IMPORTS
-import argprocess
+from argprocess import get_args
 from datetime import datetime
 from configmanagement import cSplatfilchConfig
 
@@ -22,7 +22,7 @@ lastrun = None
 ######################### PREPROCESSING #############################
 
 # process command line options and respond as needed
-args = argprocess.get_args()
+args = get_args()
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj

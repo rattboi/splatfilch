@@ -3,32 +3,31 @@
 
 import ConfigParser
 import os.path
-# import time
 from datetime import datetime
 
 class cSplatfilchConfig(object):
     ''' wrapper around ConfigParser, specialized for splatfilch'''
-    filename    = '.splatfilch.cfg'
+    filename =   'splatfilch.cfg'
     lastrun_obj = None
-    lastrun_fmt = '%Y %m %d %H %M %S'
+    lastrun_fmt = '%Y-%m-%d %H:%M:%S'
     config = ConfigParser.SafeConfigParser()
 
     def __init__(self):
         ''' ctor populates members, uses defaults if no cfg file'''
-        
+       
+        self.config = ConfigParser.SafeConfigParser()
+
         # create the file if not present
-        if not os.path.exists(self.filename):
-            
+        if not os.path.exists(self.filename):           
             #add default sections and set to today
             self.config.add_section('lastrun')
             self.setLastrun(datetime.today())
-
-        # else file exists: read out options and set class members
-        self.config = ConfigParser.SafeConfigParser()
-        self.config.read(self.filename)
-        # decode formatted string back into datetime obj
-        self.lastrun_obj = datetime.strptime(
-            self.config.get('lastrun', 'datetime_str'), self.lastrun_fmt)
+        
+        else: # file exists: read out options and set class members
+            self.config.read(self.filename)
+            # decode formatted string back into datetime obj
+            self.lastrun_obj = datetime.strptime(
+                self.config.get('lastrun', 'datetime_str'), self.lastrun_fmt)
 
     def __del__(self):
         ''' ctor writes all changed options to cfg file'''
