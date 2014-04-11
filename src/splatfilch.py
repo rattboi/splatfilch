@@ -3,7 +3,6 @@
 # file:     Splatfilch.py
 # authors:  Eric Krause
 #           Erik Rhodes
-# 
 # descr:    top-level file for splatfilch program.  features marked
 #           as (future) are beyond the scope of milestone 1
 #####################################################################
@@ -19,6 +18,7 @@ from argprocess import get_args
 from configmanagement import cSplatfilchConfig
 from logfile import LogFile
 from cachefile import CTextCache
+from connection_test import internet_on
 
 ### GLOBAL CONSTANTS
 log = None          # will be the logfile object after arg parsing
@@ -27,7 +27,6 @@ log = None          # will be the logfile object after arg parsing
 
 # process command line options and respond as needed
 args = get_args()
-log = LogFile(args)
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj
@@ -35,12 +34,16 @@ lastrun = cfg.getLastrun()  # lastrun is a datetime obj
 
 # read cache, and other program settings
 CACHE = CTextCache()
+
 # (future) open the previous log file respond to previous errors
 
-# (future) create logfile for current run
+#  create logfile for current run
+log = LogFile(args)
 
 # basic test to establish connectivity
-
+if not internet_on():
+    log.error("no can has interwebs.  please check your internet connection")
+    exit(-1)
 
 ###################### ACCUMULATION PHASE ###########################
 
