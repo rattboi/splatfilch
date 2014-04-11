@@ -18,6 +18,7 @@ from datetime import datetime
 from argprocess import get_args
 from configmanagement import cSplatfilchConfig
 from logfile import LogFile
+from cachefile import CTextCache
 
 ### GLOBAL CONSTANTS
 log = None          # will be the logfile object after arg parsing
@@ -32,8 +33,8 @@ log = LogFile(args)
 cfg = cSplatfilchConfig()   # create config handler obj
 lastrun = cfg.getLastrun()  # lastrun is a datetime obj
 
-#   read cache, and other program settings
-
+# read cache, and other program settings
+CACHE = CTextCache()
 # (future) open the previous log file respond to previous errors
 
 # (future) create logfile for current run

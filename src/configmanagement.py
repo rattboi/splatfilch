@@ -7,7 +7,7 @@ from datetime import datetime
 
 class cSplatfilchConfig(object):
     ''' wrapper around ConfigParser, specialized for splatfilch'''
-    filename =   'splatfilch.cfg'
+    filename =   'config.splatfilch'
     lastrun_obj = None
     lastrun_fmt = '%Y-%m-%d %H:%M:%S'
     config = ConfigParser.SafeConfigParser()
