@@ -13,6 +13,8 @@
 ### STL IMPORTS
 from datetime import datetime
 import logging
+import sys
+
 
 ### SPLATFILCH LIBRARY IMPORTS
 from argprocess import get_args
@@ -21,7 +23,6 @@ from cachefile import CTextCache
 from connection_test import internet_on
 
 ### GLOBAL CONSTANTS
-log = None          # will be the logfile object after arg parsing
 LOG_LVLS = {
     #   logging.CRITICAL # major error. sw may not be able to keep running
     0 : logging.ERROR,   # serous problem. sw cannot perform some function
@@ -33,34 +34,42 @@ LOG_LVLS = {
 ######################### PREPROCESSING #############################
 
 # process command line options and respond as needed
+from argprocess import get_args
 args = get_args()
 
-#  create logfile for current run
-logger = logging.getLogger()
-logger.setLevel(LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2)
-formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+# create logfile for current run
+if args.stdout:
+    logging.basicConfig(
+        level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
+        format='%(asctime)s %(name)-10s %(levelname)-10s %(message)s',
+        datefmt='%m-%d %H:%M',
+        stream=sys.stderr
+    )
 
-if (args.stdout):
-    # create console handler and set level to info
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
 else:
-    # create error file handler and set level to error
-    filename=datetime.today().strftime("./log/splatfilch_%Y%m%d_%H%M%S.txt")
-    handler = logging.FileHandler(filename)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    logging.basicConfig(
+        level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
+        format='%(asctime)s %(name)-10s %(levelname)-10s %(message)s',
+        datefmt='%m-%d %H:%M',
+        stream=sys.stderr,
+        filename=datetime.today().strftime("./log/splatfilch_%Y%m%d_%H%M%S.txt"),
+        filemode='w'
+    )
 
-logger.debug('All systems operational')
-logger.info('Airspeed 300 knots')
-logger.warn('Low on fuel')
-logger.error('No fuel. Trying to glide.')
-logger.critical('Glide attempt failed. About to crash.')
+log = logging.getLogger('main')
+log.info('logger configured')
+
+### SPLATFILCH LIBRARY IMPORTS 
+# these can be imported now that logger established
+from configmanagement import cSplatfilchConfig
+from cachefile import CTextCache
+from connection_test import internet_on
+
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj
 lastrun = cfg.getLastrun()  # lastrun is a datetime obj
+log.info(lastrun.strftime("last run was %Y-%m-%d, %I:%M:%S %p"))
 
 # read cache, and other program settings
 CACHE = CTextCache()

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # pylint: disable-msg=R0903,C0111
 
+import logging
+
 class CTextCache(object):
     '''very basic cache file. see isInCache(item) for functionality'''
     cache_filename = ".cache.splatfilch"
@@ -9,11 +11,15 @@ class CTextCache(object):
 
     def __init__(self):
         '''reads cachefile into queue'''
+        
+        self.logger = logging.getLogger('cache')
+
         try:
             with open(self.cache_filename, 'r') as infile:
                 self.cached_items = [line.strip() for line in infile]
+                self.logger.info("opening cache file")
         except IOError:
-            pass
+            self.logger.warning("no cache file found. created new cache file")
 
     def __del__(self):
         with open(self.cache_filename, 'w+') as output:
