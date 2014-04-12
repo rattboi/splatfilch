@@ -6,8 +6,11 @@ def get_args():
     # create the top-level parser
     parser = argparse.ArgumentParser(prog='splatfilch', 
         description='splatfilch can has options')
-    parser.add_argument('--verbosity', '-v', action='count',
+    parser.add_argument('--verbosity', '-v', action='count', default=0,
         help="controls how much info is logged [supported: -v, -vv]")
     parser.add_argument('--stdout', '-s', action='store_true',
         help="print to stdout instead of logging to file")
     return parser.parse_args()
+
+a = get_args()
+print a.verbosity

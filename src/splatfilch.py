@@ -12,21 +12,51 @@
 
 ### STL IMPORTS
 from datetime import datetime
+import logging
 
 ### SPLATFILCH LIBRARY IMPORTS
 from argprocess import get_args
 from configmanagement import cSplatfilchConfig
-from logfile import LogFile
 from cachefile import CTextCache
 from connection_test import internet_on
 
 ### GLOBAL CONSTANTS
 log = None          # will be the logfile object after arg parsing
+LOG_LVLS = {
+    #   logging.CRITICAL # major error. sw may not be able to keep running
+    0 : logging.ERROR,   # serous problem. sw cannot perform some function
+    1 : logging.WARNING, # an unexpected situation. or problem in near future
+    2 : logging.INFO     # confirmation things are working as expected
+    #   logging.DEBUG    # detailed info, only of intrest for diagnosing bugs
+}
 
 ######################### PREPROCESSING #############################
 
 # process command line options and respond as needed
 args = get_args()
+
+#  create logfile for current run
+logger = logging.getLogger()
+logger.setLevel(LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2)
+formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+
+if (args.stdout):
+    # create console handler and set level to info
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+else:
+    # create error file handler and set level to error
+    filename=datetime.today().strftime("./log/splatfilch_%Y%m%d_%H%M%S.txt")
+    handler = logging.FileHandler(filename)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+logger.debug('All systems operational')
+logger.info('Airspeed 300 knots')
+logger.warn('Low on fuel')
+logger.error('No fuel. Trying to glide.')
+logger.critical('Glide attempt failed. About to crash.')
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj
@@ -36,9 +66,6 @@ lastrun = cfg.getLastrun()  # lastrun is a datetime obj
 CACHE = CTextCache()
 
 # (future) open the previous log file respond to previous errors
-
-#  create logfile for current run
-log = LogFile(args)
 
 # basic test to establish connectivity
 if not internet_on():
