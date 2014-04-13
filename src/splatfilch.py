@@ -8,7 +8,7 @@
 #####################################################################
 
 ### PYLINT OPTIONS
-# pylint: disable-msg=C0103
+# pylint: disable-msg=
 
 ### STL IMPORTS
 from datetime import datetime
@@ -33,27 +33,26 @@ LOG_LVLS = {
 ######################### PREPROCESSING #############################
 
 # process command line options and respond as needed
-from argprocess import get_args
-args = get_args()
+ARGS = get_args()
 
 # set up logger
 logging.basicConfig(
-    level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
+    level=LOG_LVLS[ARGS.verbosity] if ARGS.verbosity < 3 else 2,
     format='%(asctime)s.%(msecs).3s %(name)-10s %(levelname)-10s %(message)s',
     datefmt='%T',
-    filename=None if args.stderr else datetime.today()
+    filename=None if ARGS.stderr else datetime.today()
         .strftime("./log/splatfilch_%Y-%m-%d__%H-%M-%S.txt"),
     filemode='w',
-    stream=sys.stderr if args.stderr else None
+    stream=sys.stderr if ARGS.stderr else None
 )
 
-log = logging.getLogger('main')
-log.info('logger configured')
+LOG = logging.getLogger('main')
+LOG.info('logger configured')
 
 # read splatfilch config to find last run time/date, get output dirs
-cfg = cSplatfilchConfig()   # create config handler obj
-lastrun = cfg.getLastrun()  # lastrun is a datetime obj
-log.info(lastrun.strftime("last run was %Y-%m-%d, %I:%M:%S %p"))
+CONFIG = cSplatfilchConfig()   # create config handler obj
+LAST_RUN = CONFIG.getLastrun()  # lastrun is a datetime obj
+LOG.info(LAST_RUN.strftime("last run was %Y-%m-%d, %I:%M:%S %p"))
 
 # read cache, and other program settings
 CACHE = CTextCache()
@@ -62,7 +61,7 @@ CACHE = CTextCache()
 
 # basic test to establish connectivity
 if not internet_on():
-    log.error("no can has interwebs.  please check your internet connection")
+    LOG.error("no can has interwebs.  please check your internet connection")
     exit(-1)
 
 ###################### ACCUMULATION PHASE ###########################
@@ -99,6 +98,6 @@ if not internet_on():
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
-cfg.setLastrun(datetime.now())
+CONFIG.setLastrun(datetime.now())
 
 exit(0)
