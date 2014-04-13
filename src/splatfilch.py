@@ -15,7 +15,6 @@ from datetime import datetime
 import logging
 import sys
 
-
 ### SPLATFILCH LIBRARY IMPORTS
 from argprocess import get_args
 from configmanagement import cSplatfilchConfig
@@ -37,34 +36,19 @@ LOG_LVLS = {
 from argprocess import get_args
 args = get_args()
 
-# create logfile for current run
-if args.stdout:
-    logging.basicConfig(
-        level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
-        format='%(asctime)s %(name)-10s %(levelname)-10s %(message)s',
-        datefmt='%m-%d %H:%M',
-        stream=sys.stderr
-    )
-
-else:
-    logging.basicConfig(
-        level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
-        format='%(asctime)s %(name)-10s %(levelname)-10s %(message)s',
-        datefmt='%m-%d %H:%M',
-        stream=sys.stderr,
-        filename=datetime.today().strftime("./log/splatfilch_%Y%m%d_%H%M%S.txt"),
-        filemode='w'
-    )
+# set up logger
+logging.basicConfig(
+    level=LOG_LVLS[args.verbosity] if args.verbosity < 3 else 2,
+    format='%(asctime)s.%(msecs).3s %(name)-10s %(levelname)-10s %(message)s',
+    datefmt='%T',
+    filename=None if args.stderr else datetime.today()
+        .strftime("./log/splatfilch_%Y-%m-%d__%H-%M-%S.txt"),
+    filemode='w',
+    stream=sys.stderr if args.stderr else None
+)
 
 log = logging.getLogger('main')
 log.info('logger configured')
-
-### SPLATFILCH LIBRARY IMPORTS 
-# these can be imported now that logger established
-from configmanagement import cSplatfilchConfig
-from cachefile import CTextCache
-from connection_test import internet_on
-
 
 # read splatfilch config to find last run time/date, get output dirs
 cfg = cSplatfilchConfig()   # create config handler obj
