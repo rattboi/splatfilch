@@ -53,9 +53,10 @@ def find_videos(channel_id, datetime_since, max_results):
     for search_result in response.get("items", []):
         if search_result['snippet']['description'] != "":
             results.append(
-                video_t(
-                    title=search_result['snippet']['title'],
-                    id=search_result['id']['videoId']
+                channel_t(
+                    name=search_result['snippet']['title'],
+                    id=search_result['snippet']['channelId'],
+                    description=search_result['snippet']['description']
                 )
             )
     return results

@@ -1,6 +1,6 @@
 # splatfilch files
 log/
-config.splatfilch
+config_splatfilch.json
 .cache.splatfilch
 
 # temporary storage file for passwords/etc

@@ -38,9 +38,12 @@ def splatfilch_argparser():
         help="Print a list of all tracked sources")
     sp_source_search = sp_source_modes.add_parser('search',
         help="Search for a channel by name")
+    sp_source_search.add_argument('search_term',
+        help="Name of channel to search for")
     sp_source_remove = sp_source_modes.add_parser('remove',
         help="Remove a source (by name, or by place in list)")
-
+    sp_source_remove.add_argument('channel',
+        help="Name (or number in list) of channel to remove")
     sp_source.add_argument('-v', '--verbosity', action='count', default=0,
         help="increase output verbosity [-v, -vv, -vvv]")
 

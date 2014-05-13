@@ -16,8 +16,9 @@ import logging
 import sys
 
 ### SPLATFILCH LIBRARY IMPORTS
-from argprocess import get_args
-from configmanagement import cSplatfilchConfig
+from argparser_init import splatfilch_argparser
+from source_manager import addchannel_ui, rmchannel_ui, lschannel_ui
+from json_config import config_read, config_write
 from cachefile import CTextCache
 from connection_test import internet_on
 
@@ -31,10 +32,28 @@ LOG_LVLS = {
 }
 
 ######################### PREPROCESSING #############################
-
+CONFIGNAME = "config_splatfilch.json"
 # process command line options and respond as needed
-ARGS = get_args()
+ARGS = splatfilch_argparser().parse_args()
+CONFIG = config_read(CONFIGNAME)
 
+if ARGS.mode == 'source':
+    if ARGS.source_mode == 'list':
+        lschannel_ui(CONFIG)
+        exit()
+    elif ARGS.source_mode == 'search':
+        new_channel = addchannel_ui(ARGS.search_term)
+        if new_channel != None:
+            CONFIG['channels'][new_channel.title] = new_channel.id
+            config_write(CONFIG, CONFIGNAME)
+            exit()
+    elif ARGS.source_mode == 'remove':
+        rm_channel = rmchannel_ui(CONFIG, ARGS.channel)
+        if rm_channel != None:
+            del CONFIG['channels'][rm_channel]
+            config_write(CONFIG, CONFIGNAME)
+            exit()
+exit()
 # set up logger
 logging.basicConfig(
     level=LOG_LVLS[ARGS.verbosity] if ARGS.verbosity < 3 else 2,
@@ -50,8 +69,7 @@ LOG = logging.getLogger('main')
 LOG.info('logger configured')
 
 # read splatfilch config to find last run time/date, get output dirs
-CONFIG = cSplatfilchConfig()   # create config handler obj
-LAST_RUN = CONFIG.getLastrun()  # lastrun is a datetime obj
+LAST_RUN = CONFIG['lastrun'] # lastrun is a datetime obj
 LOG.info(LAST_RUN.strftime("last run was %Y-%m-%d, %I:%M:%S %p"))
 
 # read cache, and other program settings
