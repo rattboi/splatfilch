@@ -6,22 +6,18 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from rfc3339 import rfc3339
 
-channel_t = namedtuple('channel', 'id name description')
+channel_t = namedtuple('channel', 'id title description')
 video_t = namedtuple('video', 'id title')
 
 DEVELOPER_KEY = "AIzaSyDkbupZc60XCCfJmXH39yxyUfOSaQQ03dQ"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-YOUTUBE = None
 
 def youtube():
-    global YOUTUBE
-    if YOUTUBE == None:
-        YOUTUBE = build(
-            YOUTUBE_API_SERVICE_NAME,
-            YOUTUBE_API_VERSION,
-            developerKey=DEVELOPER_KEY)
-    return YOUTUBE
+    return build(
+        YOUTUBE_API_SERVICE_NAME,
+        YOUTUBE_API_VERSION,
+        developerKey=DEVELOPER_KEY)
 
 def find_channels(channel_name, max_results):
     results = []
@@ -36,7 +32,7 @@ def find_channels(channel_name, max_results):
         if search_result['snippet']['description'] != "":
             results.append(
                 channel_t(
-                    name=search_result['snippet']['title'],
+                    title=search_result['snippet']['title'],
                     id=search_result['snippet']['channelId'],
                     description=search_result['snippet']['description']
                 )
@@ -68,6 +64,6 @@ if __name__ == "__main__":
     Monstercat = "UCJ6td3C9QlPO9O_J5dF4ZzA"
     now = datetime.now()
     last_week = now - timedelta(days=7)
-    
-    for i in find_videos(Monstercat, last_week, 50):
+
+    for i in find_channels('Monstercat', 5):
         print i.id, i.title
