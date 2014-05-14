@@ -12,8 +12,8 @@ def addchannel_ui(channel_name):
     response = ""
 
     if num_results == 0:
-        print "\nno results found for \"%s\"\n" % channel_name
-        print "\nno new sources were added for tracking\n"
+        print "\nerror:  no results found for \"%s\"" % channel_name
+        print "error:  no new sources were added for tracking\n"
         return None
 
     elif num_results == 1:
@@ -23,10 +23,10 @@ def addchannel_ui(channel_name):
             print "\nwould you like to add this source?",
             response = raw_input("[y]es or [n]o: ")
             if response.lower() == 'y':
-                print "\nsource '%s' is now tracked\n" % results[0].title
+                print "\nsuccess:  source '%s' is now tracked\n" % results[0].title
                 return results[0]
             elif response.lower() == 'n':
-                print "\nno new sources were added for tracking\n"
+                print "\nerror: no new sources were added for tracking\n"
                 return None
 
     else: # greater than 1
@@ -46,39 +46,57 @@ def addchannel_ui(channel_name):
                 num_selected = -1
 
             if num_selected >= 1 and num_selected <= num_results +1:
-                print "\nsource '%s' is now tracked\n" % \
+                print "\nsuccess:  source '%s' is now tracked\n" % \
                     results[int(response)-1].title
                 return results[int(response)-1]
-                
+
         return None
-        print "\nno new sources were added for tracking\n"
+        print "\nerror:  no new sources were added for tracking\n"
 
 def rmchannel_ui(config_dict, channel):
+    sorted_channels = sorted(config_dict['channels'])
+    response = ''
+
     try:
-        channel_num = int(channel)
-        if len(config_dict['channels']) < channel_num:
-            print "\nno sources were removed from tracking\n"
+        if int(channel) < 0:
+            raise IndexError
+        else:
+            rm_channel = sorted_channels[int(channel)]
+
+    except ValueError:
+        if channel not in config_dict['channels']:
+            print "\nerror:  channel '%s' not found " % channel
+            print "error:  no sources were removed from tracking\n"
             return None
         else:
-            print "\nsource '%s' no longer tracked\n" % \
-                sorted(config_dict['channels'])[channel_num] 
-            return sorted(config_dict['channels'])[channel_num]
-    except ValueError:
-        if channel in config_dict['channels']:
-            print "\nsource '%s' no longer tracked\n" % channel 
-            return channel
-        else:
-            print "\nno sources were removed from tracking\n"
+            rm_channel = channel
+
+    except IndexError:
+        print "\nerror: '%d' outside the range of tracked channels (0-%d)" \
+            % (int(channel), len(config_dict['channels']))
+        print "error:  no sources were removed from tracking\n"
+        return None
+
+    while response.lower() != 'y' and response.lower != 'n':
+        print "\nwould you like to remove '%s'?" % rm_channel
+        response = raw_input("[y]es or [n]o: ")
+        if response.lower() == 'y':
+            print "\nsuccess:  '%s' is no longer tracked\n" % rm_channel
+            return rm_channel
+        elif response.lower() == 'n':
+            print "\nsuccess:  no sources have been untracked\n"
             return None
 
 def lschannel_ui(config_dict):
-    names = sorted(config_dict['channels'])
+    count = 0
+
     print "\nCurrently tracked sources:"
-    print "--------------------------"
-    for i in range(len(names)):
-        print '%3d - "%-s" (%s)' % (i, names[i],
-            config_dict['channels'].get(names[i]))
-    print "--------------------------\n"
+    print ".-----------------------------------------------------------."
+    for i in sorted(config_dict['channels']):
+        print '|%3d | %-25s | %20s |' % \
+            (count, '"' + i + '"', config_dict['channels'].get(i))
+        count += 1
+    print "'-----------------------------------------------------------'\n"
 
 if __name__ == "__main__":
     CONFIG = config_read("temp")
