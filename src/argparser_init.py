@@ -20,7 +20,7 @@ def splatfilch_argparser():
             tracked sources.",
         help="Download new content from all sources since last run.")
 
-    sp_update.add_argument('-s', '--stdout', action='store_true',
+    sp_update.add_argument('-s', '--stderr', action='store_true',
         help="print to screen instead of creating a log file")
     sp_update.add_argument('-v', '--verbosity', action='count', default=0,
         help="increase output verbosity [-v, -vv, -vvv]")

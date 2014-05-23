@@ -17,9 +17,9 @@ class CTextCache(object):
         try:
             with open(self.cache_filename, 'r') as infile:
                 self.cached_items = [line.strip() for line in infile]
-                self.logger.info("opening cache file")
+                self.logger.info("successfully opened cachefile")
         except IOError:
-            self.logger.warning("no cache file found. created new cache file")
+            self.logger.warning("no cachefile found, created new cachefile")
 
     def __del__(self):
         with open(self.cache_filename, 'w+') as output:

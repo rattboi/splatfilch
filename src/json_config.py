@@ -3,6 +3,9 @@
 
 import json
 import os.path
+import logging
+
+logger = logging.getLogger('json_config')
 
 BLANKFILE = {'lastrun'   : "",
              'output_dir': "./downloads",
@@ -11,9 +14,11 @@ BLANKFILE = {'lastrun'   : "",
 
 def config_read(filename):
     if os.path.isfile(filename):
+        logger.info("successfully opened config file")
         with open(filename, 'r') as infile:
             return json.load(infile)
     else:
+        logger.warning("no config found, created new file from defaults")
         return BLANKFILE
 
 def config_write(config_dict, filename):

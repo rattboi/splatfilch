@@ -21,8 +21,12 @@ from source_manager import addchannel_ui, rmchannel_ui, lschannel_ui
 from json_config import config_read, config_write
 from cachefile import CTextCache
 from connection_test import internet_on
+from rfc3339 import rfc3339
 
 ### GLOBAL CONSTANTS
+CONFIGNAME = "config_splatfilch.json"   # name of config file
+DATETIME_FMT = "%Y-%m-%d %H:%M:%S"      # date/time format used in config file
+LAST_RUN = None                         # last run date and time (datetime obj)
 LOG_LVLS = {
     #   logging.CRITICAL # major error. sw may not be able to keep running
     0 : logging.ERROR,   # serous problem. sw cannot perform some function
@@ -32,45 +36,59 @@ LOG_LVLS = {
 }
 
 ######################### PREPROCESSING #############################
-CONFIGNAME = "config_splatfilch.json"
-# process command line options and respond as needed
+# process the command line arguments
 ARGS = splatfilch_argparser().parse_args()
-CONFIG = config_read(CONFIGNAME)
 
-if ARGS.mode == 'source':
-    if ARGS.source_mode == 'list':
-        lschannel_ui(CONFIG)
-        exit()
-    elif ARGS.source_mode == 'search':
-        new_channel = addchannel_ui(ARGS.search_term)
-        if new_channel != None:
-            CONFIG['channels'][new_channel.title] = new_channel.id
-            config_write(CONFIG, CONFIGNAME)
-            exit()
-    elif ARGS.source_mode == 'remove':
-        rm_channel = rmchannel_ui(CONFIG, ARGS.channel)
-        if rm_channel != None:
-            del CONFIG['channels'][rm_channel]
-            config_write(CONFIG, CONFIGNAME)
-            exit()
-exit()
 # set up logger
 logging.basicConfig(
     level=LOG_LVLS[ARGS.verbosity] if ARGS.verbosity < 3 else 2,
-    format='%(asctime)s.%(msecs).3s %(name)-10s %(levelname)-10s %(message)s',
+    format='%(asctime)s.%(msecs).3s %(name)-12s %(levelname)-8s %(message)s',
     datefmt='%T',
     filename=None if ARGS.stderr else datetime.today()
         .strftime("./log/splatfilch_%Y-%m-%d__%H-%M-%S.txt"),
     filemode='w',
     stream=sys.stderr if ARGS.stderr else None
 )
-
 LOG = logging.getLogger('main')
 LOG.info('logger configured')
 
+# read in config file
+CONFIG = config_read(CONFIGNAME)
+
+# SOURCE MANAGEMENT MODE
+# ----------------------
+# a simple auxilary operation mode for adding/removing/listing sources
+if ARGS.mode == 'source':
+    if ARGS.source_mode == 'list':
+        lschannel_ui(CONFIG)
+
+    elif ARGS.source_mode == 'search':
+        new_channel = addchannel_ui(ARGS.search_term)
+        if new_channel != None:
+            CONFIG['channels'][new_channel.title] = new_channel.id
+
+    elif ARGS.source_mode == 'remove':
+        rm_channel = rmchannel_ui(CONFIG, ARGS.channel)
+        if rm_channel != None:
+            del CONFIG['channels'][rm_channel]
+
+    config_write(CONFIG, CONFIGNAME)
+    exit()
+
+
+# UPDATE MODE
+# ----------------------
+# the normal mode of operation for the program.
+# iterates through all sources, downloads/converts new uploads from each.
+
 # read splatfilch config to find last run time/date, get output dirs
-LAST_RUN = CONFIG['lastrun'] # lastrun is a datetime obj
-LOG.info(LAST_RUN.strftime("last run was %Y-%m-%d, %I:%M:%S %p"))
+if CONFIG['lastrun'] == "":
+    LAST_RUN = datetime.now()
+    CONFIG['lastrun'] = LAST_RUN.strftime(DATETIME_FMT)
+else:
+    LAST_RUN = datetime.strptime(CONFIG['lastrun'], DATETIME_FMT)
+
+LOG.info("last run was " + CONFIG['lastrun'])
 
 # read cache, and other program settings
 CACHE = CTextCache()
@@ -116,6 +134,6 @@ if not internet_on():
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
-CONFIG.setLastrun(datetime.now())
+config_write(CONFIG, CONFIGNAME)
 
 exit(0)
