@@ -4,10 +4,13 @@
 import json
 import os.path
 import logging
+from datetime import datetime
 
 logger = logging.getLogger('json_config')
 
-BLANKFILE = {'lastrun'   : "",
+DATETIME_FMT = "%Y-%m-%d %H:%M:%S"      # date/time format used in config file
+
+BLANKFILE = {'lastrun'   : datetime.now().strftime(DATETIME_FMT),
              'output_dir': "./downloads",
              'channels'  : {}
             }

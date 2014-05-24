@@ -11,16 +11,17 @@
 # pylint: disable-msg=
 
 ### STL IMPORTS
-from datetime import datetime
+from datetime import datetime, timedelta
+import os
 import logging
 import sys
+import urllib2
 
 ### SPLATFILCH LIBRARY IMPORTS
+import json_config
 from argparser_init import splatfilch_argparser
 from source_manager import addchannel_ui, rmchannel_ui, lschannel_ui
-from json_config import config_read, config_write
 from cachefile import CTextCache
-from connection_test import internet_on
 from rfc3339 import rfc3339
 
 ### GLOBAL CONSTANTS
@@ -35,9 +36,14 @@ LOG_LVLS = {
     #   logging.DEBUG    # detailed info, only of intrest for diagnosing bugs
 }
 
-######################### PREPROCESSING #############################
-# process the command line arguments
+# PREPROCESSING
+# ----------------------
+# parse arguments, set up the logger, and read in the config file
 ARGS = splatfilch_argparser().parse_args()
+
+# create log directory if it does not exist
+if not os.path.exists('log'):
+    os.makedirs('log')
 
 # set up logger
 logging.basicConfig(
@@ -53,7 +59,7 @@ LOG = logging.getLogger('main')
 LOG.info('logger configured')
 
 # read in config file
-CONFIG = config_read(CONFIGNAME)
+CONFIG = json_config.config_read(CONFIGNAME)
 
 # SOURCE MANAGEMENT MODE
 # ----------------------
@@ -72,7 +78,7 @@ if ARGS.mode == 'source':
         if rm_channel != None:
             del CONFIG['channels'][rm_channel]
 
-    config_write(CONFIG, CONFIGNAME)
+    json_config.config_write(CONFIG, CONFIGNAME)
     exit()
 
 
@@ -81,24 +87,29 @@ if ARGS.mode == 'source':
 # the normal mode of operation for the program.
 # iterates through all sources, downloads/converts new uploads from each.
 
-# read splatfilch config to find last run time/date, get output dirs
-if CONFIG['lastrun'] == "":
-    LAST_RUN = datetime.now()
-    CONFIG['lastrun'] = LAST_RUN.strftime(DATETIME_FMT)
-else:
-    LAST_RUN = datetime.strptime(CONFIG['lastrun'], DATETIME_FMT)
+# basic test to establish connectivity
+try:
+    urllib2.urlopen('http://74.125.228.100', timeout=1)
+    LOG.info("internet connectivity seems OK")
+except urllib2.URLError as err:
+    LOG.error("no internet connectivity.  check your internet connection")
+    exit(-1)
 
-LOG.info("last run was " + CONFIG['lastrun'])
-
-# read cache, and other program settings
+# open the cachefile
 CACHE = CTextCache()
+
+# read splatfilch config to find last run time/date, get output dirs
+LAST_RUN = datetime.strptime(CONFIG['lastrun'], json_config.DATETIME_FMT)
+
+# if last run was less than X time ago, don't run again.
+if LAST_RUN > (datetime.today() - timedelta(seconds=5)):
+    LOG.error("last run was like 5 seconds ago.  calm down.")
+    exit(-1)
+else:
+    LOG.info("last run was " + CONFIG['lastrun'])
 
 # (future) open the previous log file respond to previous errors
 
-# basic test to establish connectivity
-if not internet_on():
-    LOG.error("no can has interwebs.  please check your internet connection")
-    exit(-1)
 
 ###################### ACCUMULATION PHASE ###########################
 
@@ -134,6 +145,8 @@ if not internet_on():
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
-config_write(CONFIG, CONFIGNAME)
+CONFIG['lastrun'] = datetime.today().strftime(DATETIME_FMT)
+LOG.info("last run set to: " + CONFIG['lastrun'])
+json_config.config_write(CONFIG, CONFIGNAME)
 
 exit(0)
