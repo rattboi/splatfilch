@@ -2,10 +2,6 @@
 # -*- coding: UTF-8 -*-
 # pylint: disable=anomalous-backslash-in-string,line-too-long
 import re
-from collections import namedtuple
-
-regex_t = namedtuple("Regex_Type", "re artist title")
-common = regex_t("^(.+?)( - )(.+?)$", 1, 3)
 
 def title_parse(videoname):
     """ extracts artist(s) and song title from youtube video title
@@ -58,17 +54,16 @@ def title_parse(videoname):
     # remove unicode characters, if present
     videoname = videoname.encode('ascii', 'ignore')
 
-    # before counting dashes, fix a rare (stupid) case where uploaders use
-    # 2 dashes instead of 1
+    # stop processing if there are no dashes, as it probably isn't a song
+    if '-' not in videoname:
+        return ('', videoname)
+
+    # convert double dashes to single. in this routine, ' - ' ==  ' -- '
     if '--' in videoname:
         videoname = re.sub('--', '-', videoname)
 
     # number of dashes can help to determine format
     dashes = re.findall(" - ", videoname)
-
-    # it probably isn't a song if there is no dash...
-    if len(dashes) == 0:
-        return ('', videoname)
 
     # a rare case where '*text*' appears at the front of the title
     if len(re.findall(r'\*', videoname)) == 2:
@@ -82,17 +77,15 @@ def title_parse(videoname):
     if ' | ' in videoname:
         videoname = re.sub(r'^(.+?) \| ', '', videoname)
 
-    # commonly, this means '[text] - artist - title ... '
-    # in this case, the leading '[text] -' can be deleted, then
-    # parsing can continue using single-dash algorithm
-    if len(dashes) == 2:
+    # a rare case where '[text] - ' appears at the front of the title
+    if len(dashes) == 2 and '[' in videoname:
         videoname = re.sub(r'^\[(.+?)\] - ', '', videoname)
 
     # single-dash algorithm: split into two fields at the dash,
     # then remove '[text]' from each, if present
-    attempt = re.search(common.re, videoname)
-    artist = attempt.group(common.artist)
-    title = attempt.group(common.title)
+    attempt = re.search('^(.+?)( - )(.+?)$', videoname)
+    artist = attempt.group(1)
+    title = attempt.group(3)
 
     # remove square bracketed fields preceeding artist, if present
     if ']' in artist:
