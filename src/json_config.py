@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 ''' methods for simplifying the (already simple) management of settings json'''
+# pylint: disable=bad-whitespace
 
 import json
 import os.path
@@ -10,9 +11,15 @@ logger = logging.getLogger('json_config')
 
 DATETIME_FMT = "%Y-%m-%d %H:%M:%S"      # date/time format used in config file
 
-BLANKFILE = {'lastrun'   : datetime.now().strftime(DATETIME_FMT),
-             'output_dir': "./downloads",
-             'channels'  : {}
+BLANKFILE = { 'general'  : { 'lastrun' : datetime.now().strftime(DATETIME_FMT),
+                             'downloads' : './downloads'
+                           },
+
+              'cache'    : { 'path' : './.cache.txt',
+                             'max_size' : 1024
+                           },
+
+              'channels' : {}
             }
 
 def config_read(filename):

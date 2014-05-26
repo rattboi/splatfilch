@@ -21,7 +21,7 @@ import urllib2
 import json_config
 from argparser_init import splatfilch_argparser
 from source_manager import addchannel_ui, rmchannel_ui, lschannel_ui
-from cachefile import CTextCache
+from CacheList import CacheList
 from rfc3339 import rfc3339
 
 ### GLOBAL CONSTANTS
@@ -96,17 +96,19 @@ except urllib2.URLError as err:
     exit(-1)
 
 # open the cachefile
-CACHE = CTextCache()
+CACHE = CacheList(CONFIG['cache']['path'], CONFIG['cache']['max_size'])
 
 # read splatfilch config to find last run time/date, get output dirs
-LAST_RUN = datetime.strptime(CONFIG['lastrun'], json_config.DATETIME_FMT)
+LAST_RUN = datetime.strptime(CONFIG['general']['lastrun'],
+        json_config.DATETIME_FMT)
 
 # if last run was less than X time ago, don't run again.
 if LAST_RUN > (datetime.today() - timedelta(seconds=5)):
     LOG.error("last run was like 5 seconds ago.  calm down.")
+    json_config.config_write(CONFIG, CONFIGNAME)
     exit(-1)
 else:
-    LOG.info("last run was " + CONFIG['lastrun'])
+    LOG.info("last run was " + CONFIG['general']['lastrun'])
 
 # (future) open the previous log file respond to previous errors
 
@@ -145,8 +147,8 @@ else:
 # send notifications to users based on files SUCCESSFULLY downloaded
 
 # update lastrun date/time
-CONFIG['lastrun'] = datetime.today().strftime(DATETIME_FMT)
-LOG.info("last run set to: " + CONFIG['lastrun'])
+CONFIG['general']['lastrun'] = datetime.today().strftime(DATETIME_FMT)
+LOG.info("last run set to: " + CONFIG['general']['lastrun'])
 json_config.config_write(CONFIG, CONFIGNAME)
 
 exit(0)
