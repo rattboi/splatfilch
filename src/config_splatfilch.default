@@ -1,0 +1,46 @@
+{
+    "channels": {
+        "GodLike": "UCQ3fo52sQyEFJaB10dpw0cw", 
+        "Vital EDM": "UCM3sYnaN67Epz3vrZxPRRMA", 
+        "MA Electro": "UCXoRh3xdwotA7qKR_kp0c-Q", 
+        "EDM DancePolice": "UCpYy-5bjNtWt8ri1zyMU6qg", 
+        "Nik Cooper": "UCaAlh3Iy7rAcO3MgD_O3Kkg", 
+        "Never Say Die Records": "UCCTYQM7L9G_Lr2w8KH6C-Tw", 
+        "Spread The Jams": "UCZOTfKAE1lfv_KZBYxhZihQ", 
+        "Acro3at Music": "UCExnCMCeXhD5R6MzyXYFy-w", 
+        "Tracks4Free": "UCE5EqsVcrzLQKWOCSVrikgA", 
+        "ElectrostepNetwork": "UC9RPTLONMjV0zhOqSZAAfiw", 
+        "Aleksander Vinter": "UC5ur2L6Zu4oCShmtFw9UTfQ", 
+        "SectionZ": "UCFzEHY3hF2CugMHwIeDEOgA", 
+        "Berzox": "UCyePQ8y0eJQ5E-EuiaE29Xg", 
+        "AirwaveDubstepTV": "UCMRrge2ToIanH-mU-2sYWFw", 
+        "HyperboltEDM": "UCF6-fdubXkcpELOB5sUbrWw", 
+        "Mr FijiWiji": "UCGnvMBf7bX7-1L0LD4JUx1g", 
+        "Drop the Bassline": "UCiuaPbnqzf7APHMBVnpyzzQ", 
+        "Argofox": "UCvwiUEXYYWT6V-QyBWx7REw", 
+        "Charlesdock": "UC0Sug5xl5xLAFAo2HgsmHOQ", 
+        "Monstafluff Music": "UCNqFDjYTexJDET3rPDrmJKg", 
+        "Famous Lounge | EDM Promotion": "UCJQqtpbH7nOR76bEgjyfBAA", 
+        "NitroFunOfficial": "UCvpSayXiUOBk143j1QnP8WQ", 
+        "GodLike Promotions": "UC_gp-0Xm3kmKFHgl7t0BIzA", 
+        "ElectrostepNation": "UCt81OwzUTPFCN8Jr3-0a-9Q", 
+        "Mysobeat": "UCNMDP_oWaGBVMA0kaEoP0rw", 
+        "MrSuicideSheep": "UC5nc_ZtjKW1htCVZVRxlQAQ", 
+        "KickassMusic": "UCyR-3-BVzsfWBAH-wbLgEeA", 
+        "Play Me Records": "UCy6kM3ABR7CoPvj1o9pQmzQ", 
+        "GalaxyMusic": "UCIKF1msqN7lW9gplsifOPkQ", 
+        "MA Dubstep": "UC0XKvSq8CcMBSQTKXZXnEiQ", 
+        "Monstercat": "UCJ6td3C9QlPO9O_J5dF4ZzA", 
+        "InfectedMusic": "UCG-KeToSZQ_2PSc2si4FrYw", 
+        "DropThatCat.com - We Love Electronic Music": "UCBGcRewZCagr2PNeTwF8tjQ", 
+        "Proximity": "UC3ifTl5zKiCAhHIBQYcaTeg"
+    }, 
+    "cache": {
+        "path": "./.cache.txt", 
+        "max_size": 1024
+    }, 
+    "general": {
+        "lastrun": "2014-05-26 00:57:12", 
+        "downloads": "./downloads"
+    }
+}
