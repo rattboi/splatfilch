@@ -46,6 +46,8 @@ def splatfilch_argparser():
         help="Name (or number in list) of channel to remove")
     sp_source.add_argument('-v', '--verbosity', action='count', default=0,
         help="increase output verbosity [-v, -vv, -vvv]")
+    sp_source.add_argument('-s', '--stderr', action='store_true',
+        help="print to screen instead of creating a log file")
 
     return parser
 
