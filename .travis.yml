@@ -5,3 +5,8 @@ install:
     - "pip install -r requirements.txt"
 script:
     - "python src/splatfilch.py update -s -vvv"
+notifications:
+    irc:
+        channels:
+            - "chat.freenode.net#splatfilch"
+            - "irc.cat.pdx.edu#splatfilch"
