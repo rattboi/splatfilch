@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-pip install --upgrade bigquery
-pip install --upgrade google-api-python-client
+pip install rfc3339 --pre
+pip install oauth2client google-api-python-client
